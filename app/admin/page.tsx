@@ -34,13 +34,8 @@ type Submission = {
   isNew?: boolean
 }
 
-// Define available tables
-const AVAILABLE_TABLES = [
-  { id: "jv_pm", name: "Property Management" },
-  { id: "jv_gc_escrow", name: "GC Escrow" },
-  { id: "jv_gc_card", name: "GC Card" },
-  { id: "jv_subcontractor_escrow", name: "Subcontractor Escrow" },
-]
+// Define available tables - Only Property Management
+const AVAILABLE_TABLES = [{ id: "jv_pm", name: "Property Management" }]
 
 export default function AdminPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -310,17 +305,7 @@ export default function AdminPage() {
               <Database className="h-4 w-4 mr-2 text-blue-400" />
               <div className="flex items-center space-x-2">
                 <span className="text-white/60">Current Table:</span>
-                <select
-                  className="bg-zinc-800 border-zinc-700 rounded p-1 text-sm"
-                  value={currentTable}
-                  onChange={(e) => handleTableChange(e.target.value)}
-                >
-                  {AVAILABLE_TABLES.map((table) => (
-                    <option key={table.id} value={table.id}>
-                      {table.name}
-                    </option>
-                  ))}
-                </select>
+                <span className="bg-zinc-800 border-zinc-700 rounded p-1 text-sm">Property Management</span>
               </div>
             </div>
           </div>
