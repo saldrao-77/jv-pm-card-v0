@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { CreditCard, Smartphone, Receipt, Activity } from "lucide-react"
+import { CreditCard, Smartphone, Receipt, Activity, Phone } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 const carouselItems = [
   {
@@ -45,6 +47,7 @@ const carouselItems = [
 
 export function CarouselSection() {
   const [activeItem, setActiveItem] = useState(carouselItems[0].id)
+  const [phoneNumber, setPhoneNumber] = useState("")
 
   // Auto-rotate carousel
   useEffect(() => {
@@ -59,10 +62,56 @@ export function CarouselSection() {
     return () => clearInterval(interval)
   }, [])
 
+  // Handle phone number input - only allow numbers
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '') // Remove non-digits
+    setPhoneNumber(value)
+  }
+
+  // Format phone number for display
+  const formatPhoneNumber = (phone: string) => {
+    if (phone.length <= 3) return phone
+    if (phone.length <= 6) return `(${phone.slice(0, 3)}) ${phone.slice(3)}`
+    return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 10)}`
+  }
+
+  const handleGetDemo = () => {
+    // Handle demo request logic here
+    console.log("Demo requested for phone:", phoneNumber)
+    // You can add navigation to calendar page or other logic
+  }
+
   return (
     <section className="py-20 bg-black">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 font-heading">SEE IT IN ACTION</h2>
+        
+        {/* Demo Request Section */}
+        <div className="flex flex-col items-center justify-center mb-16">
+          <p className="text-center text-white/70 mb-8 max-w-2xl mx-auto">
+            See how JobVault can help your property management business.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-lg mx-auto">
+            <div className="relative w-full sm:w-auto flex-shrink-0">
+              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50 z-10" />
+              <Input
+                type="tel"
+                placeholder="(555) 123-4567"
+                value={formatPhoneNumber(phoneNumber)}
+                onChange={handlePhoneChange}
+                className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 w-full sm:w-48 text-center"
+                maxLength={14}
+              />
+            </div>
+            <Button 
+              onClick={handleGetDemo}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-2 whitespace-nowrap w-full sm:w-auto flex-shrink-0"
+            >
+              Get Free Demo
+            </Button>
+          </div>
+        </div>
 
         <div className="bg-zinc-900 rounded-lg overflow-hidden shadow-2xl">
           <div className="p-2 bg-zinc-800 flex gap-2">
