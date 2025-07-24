@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     console.log('Twilio number:', twilioNumber)
     console.log('Account SID:', accountSid)
 
-    // Send SMS via Twilio
+    // Send SMS via Twilio with A2P compliant message
     const message = await client.messages.create({
       body: 'JobVault: Demo requested. Our team will call you within 24hrs to discuss property expense management solutions. Reply STOP to opt out.',
       from: twilioNumber,

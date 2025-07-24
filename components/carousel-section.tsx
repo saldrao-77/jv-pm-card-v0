@@ -5,7 +5,7 @@ import Image from "next/image"
 import { CreditCard, Smartphone, Receipt, Activity, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { FakeExpensePopup } from "@/components/fake-expense-popup"
+
 
 const carouselItems = [
   {
@@ -51,7 +51,6 @@ export function CarouselSection() {
   const [phoneNumber, setPhoneNumber] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
-  const [showExpensePopup, setShowExpensePopup] = useState(false)
 
   // Auto-rotate carousel
   useEffect(() => {
@@ -112,8 +111,6 @@ export function CarouselSection() {
       if (response.ok) {
         setMessage("✅ Demo request sent! Check your phone for details.")
         setPhoneNumber("") // Clear the input
-        // Also show the fake expense popup for additional demo
-        setShowExpensePopup(true)
       } else {
         setMessage(`❌ Failed to send: ${data.error}`)
       }
@@ -232,11 +229,6 @@ export function CarouselSection() {
           </div>
         </div>
       </div>
-      
-      <FakeExpensePopup 
-        isOpen={showExpensePopup} 
-        onClose={() => setShowExpensePopup(false)} 
-      />
     </section>
   )
 }
