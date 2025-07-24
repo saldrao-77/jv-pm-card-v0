@@ -52,6 +52,11 @@ export function CarouselSection() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
 
+  // Log initial component state
+  console.log("🏁 COMPONENT LOADED: CarouselSection initialized")
+  console.log("🏁 COMPONENT LOADED: Initial phoneNumber:", phoneNumber)
+  console.log("🏁 COMPONENT LOADED: Initial isLoading:", isLoading)
+
   // Auto-rotate carousel
   useEffect(() => {
     const interval = setInterval(() => {
@@ -67,7 +72,11 @@ export function CarouselSection() {
 
   // Handle phone number input - only allow numbers
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '') // Remove non-digits
+    const rawValue = e.target.value
+    const value = rawValue.replace(/\D/g, '') // Remove non-digits
+    console.log("📱 PHONE INPUT: Raw value:", rawValue)
+    console.log("📱 PHONE INPUT: Cleaned value:", value)
+    console.log("📱 PHONE INPUT: Length:", value.length)
     setPhoneNumber(value)
     setMessage("") // Clear any previous messages
   }
@@ -80,20 +89,29 @@ export function CarouselSection() {
   }
 
   const handleGetDemo = async () => {
-    console.log("🚀 Button clicked! Phone number:", phoneNumber)
+    console.log("🚀 STEP 1: Button clicked! Phone number:", phoneNumber)
+    console.log("🚀 STEP 1: Phone number length:", phoneNumber.length)
+    console.log("🚀 STEP 1: Phone number type:", typeof phoneNumber)
     
     if (!phoneNumber || phoneNumber.length < 10) {
-      console.log("❌ Phone number validation failed:", phoneNumber)
+      console.log("❌ STEP 2: Phone number validation failed:", {
+        phoneNumber,
+        length: phoneNumber.length,
+        isEmpty: !phoneNumber
+      })
       setMessage("Please enter a valid 10-digit phone number")
       return
     }
 
-    console.log("✅ Phone number valid, sending SMS...")
+    console.log("✅ STEP 2: Phone number validation passed")
+    console.log("📱 STEP 3: Setting loading state to true")
     setIsLoading(true)
     setMessage("")
 
     try {
-      console.log("📡 Making API call to /api/send-sms")
+      console.log("📡 STEP 4: Making API call to /api/send-sms")
+      console.log("📡 STEP 4: Request payload:", { phoneNumber })
+      
       const response = await fetch('/api/send-sms', {
         method: 'POST',
         headers: {
@@ -104,20 +122,28 @@ export function CarouselSection() {
         }),
       })
 
-      console.log("📨 API response status:", response.status)
+      console.log("📨 STEP 5: API response received")
+      console.log("📨 STEP 5: Response status:", response.status)
+      console.log("📨 STEP 5: Response ok:", response.ok)
+      
       const data = await response.json()
-      console.log("📨 API response data:", data)
+      console.log("📨 STEP 6: Response data parsed:", data)
 
       if (response.ok) {
+        console.log("✅ STEP 7: Success! Setting success message")
         setMessage("✅ Demo request sent! Check your phone for details.")
         setPhoneNumber("") // Clear the input
       } else {
+        console.log("❌ STEP 7: API error, setting error message")
         setMessage(`❌ Failed to send: ${data.error}`)
       }
-    } catch (error) {
-      console.error('Error sending SMS:', error)
+    } catch (error: any) {
+      console.error('❌ STEP 7: Exception caught:', error)
+      console.error('❌ STEP 7: Error message:', error.message)
+      console.error('❌ STEP 7: Error stack:', error.stack)
       setMessage("❌ Something went wrong. Please try again.")
     } finally {
+      console.log("🔄 STEP 8: Setting loading state to false")
       setIsLoading(false)
     }
   }
@@ -147,7 +173,13 @@ export function CarouselSection() {
               />
             </div>
             <Button 
-              onClick={handleGetDemo}
+              onClick={() => {
+                console.log("🔴 BUTTON WRAPPER: Button clicked!")
+                console.log("🔴 BUTTON WRAPPER: Current phone number:", phoneNumber)
+                console.log("🔴 BUTTON WRAPPER: Is loading:", isLoading)
+                console.log("🔴 BUTTON WRAPPER: About to call handleGetDemo()")
+                handleGetDemo()
+              }}
               disabled={isLoading}
               className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium px-8 py-2 whitespace-nowrap w-full sm:w-auto flex-shrink-0"
             >
