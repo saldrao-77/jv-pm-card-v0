@@ -17,6 +17,12 @@ const inter = Inter({
   display: "swap",
 })
 
+export const metadata = {
+  title: "JobVault for property managers",
+  description: "Give your PMs the tools to spend smarter with trackable cards, instant receipt uploads, and AI-driven spend insights.",
+  generator: 'v0.dev'
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -70,6 +76,4 @@ export default function RootLayout({
   )
 }
 
-export const metadata = {
-      generator: 'v0.dev'
-    };
+

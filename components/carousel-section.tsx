@@ -5,6 +5,7 @@ import Image from "next/image"
 import { CreditCard, Smartphone, Receipt, Activity, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { FakeExpensePopup } from "@/components/fake-expense-popup"
 
 const carouselItems = [
   {
@@ -48,6 +49,9 @@ const carouselItems = [
 export function CarouselSection() {
   const [activeItem, setActiveItem] = useState(carouselItems[0].id)
   const [phoneNumber, setPhoneNumber] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState("")
+  const [showExpensePopup, setShowExpensePopup] = useState(false)
 
   // Auto-rotate carousel
   useEffect(() => {
@@ -66,6 +70,7 @@ export function CarouselSection() {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '') // Remove non-digits
     setPhoneNumber(value)
+    setMessage("") // Clear any previous messages
   }
 
   // Format phone number for display
@@ -75,10 +80,49 @@ export function CarouselSection() {
     return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 10)}`
   }
 
-  const handleGetDemo = () => {
-    // Handle demo request logic here
-    console.log("Demo requested for phone:", phoneNumber)
-    // You can add navigation to calendar page or other logic
+  const handleGetDemo = async () => {
+    console.log("🚀 Button clicked! Phone number:", phoneNumber)
+    
+    if (!phoneNumber || phoneNumber.length < 10) {
+      console.log("❌ Phone number validation failed:", phoneNumber)
+      setMessage("Please enter a valid 10-digit phone number")
+      return
+    }
+
+    console.log("✅ Phone number valid, sending SMS...")
+    setIsLoading(true)
+    setMessage("")
+
+    try {
+      console.log("📡 Making API call to /api/send-sms")
+      const response = await fetch('/api/send-sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumber: phoneNumber
+        }),
+      })
+
+      console.log("📨 API response status:", response.status)
+      const data = await response.json()
+      console.log("📨 API response data:", data)
+
+      if (response.ok) {
+        setMessage("✅ Demo request sent! Check your phone for details.")
+        setPhoneNumber("") // Clear the input
+        // Also show the fake expense popup for additional demo
+        setShowExpensePopup(true)
+      } else {
+        setMessage(`❌ Failed to send: ${data.error}`)
+      }
+    } catch (error) {
+      console.error('Error sending SMS:', error)
+      setMessage("❌ Something went wrong. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -89,7 +133,7 @@ export function CarouselSection() {
         {/* Demo Request Section */}
         <div className="flex flex-col items-center justify-center mb-16">
           <p className="text-center text-white/70 mb-8 max-w-2xl mx-auto">
-            See how JobVault can help your property management business.
+            Enter your phone number to get a demo via text and see how JobVault works.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-lg mx-auto">
@@ -102,15 +146,25 @@ export function CarouselSection() {
                 onChange={handlePhoneChange}
                 className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 w-full sm:w-48 text-center"
                 maxLength={14}
+                disabled={isLoading}
               />
             </div>
             <Button 
               onClick={handleGetDemo}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-2 whitespace-nowrap w-full sm:w-auto flex-shrink-0"
+              disabled={isLoading}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium px-8 py-2 whitespace-nowrap w-full sm:w-auto flex-shrink-0"
             >
-              Get Free Demo
+              {isLoading ? "Sending..." : "Get Free Demo"}
             </Button>
           </div>
+          
+          {message && (
+            <div className="mt-4 text-center">
+              <p className={`text-sm ${message.includes('✅') ? 'text-green-400' : 'text-red-400'}`}>
+                {message}
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="bg-zinc-900 rounded-lg overflow-hidden shadow-2xl">
@@ -178,6 +232,11 @@ export function CarouselSection() {
           </div>
         </div>
       </div>
+      
+      <FakeExpensePopup 
+        isOpen={showExpensePopup} 
+        onClose={() => setShowExpensePopup(false)} 
+      />
     </section>
   )
 }
