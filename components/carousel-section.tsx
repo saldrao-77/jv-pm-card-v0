@@ -5,6 +5,7 @@ import Image from "next/image"
 import { CreditCard, Smartphone, Receipt, Activity, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PrivacyPolicyPopup } from "@/components/privacy-policy-popup"
 
 
 const carouselItems = [
@@ -51,6 +52,7 @@ export function CarouselSection() {
   const [phoneNumber, setPhoneNumber] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
+  const [showPrivacyPopup, setShowPrivacyPopup] = useState(false)
 
   // Log initial component state
   console.log("🏁 COMPONENT LOADED: CarouselSection initialized")
@@ -88,7 +90,7 @@ export function CarouselSection() {
     return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6, 10)}`
   }
 
-  const handleGetDemo = async () => {
+  const handleGetDemo = () => {
     console.log("🚀 STEP 1: Button clicked! Phone number:", phoneNumber)
     console.log("🚀 STEP 1: Phone number length:", phoneNumber.length)
     console.log("🚀 STEP 1: Phone number type:", typeof phoneNumber)
@@ -104,9 +106,17 @@ export function CarouselSection() {
     }
 
     console.log("✅ STEP 2: Phone number validation passed")
+    console.log("📋 STEP 3: Showing privacy policy popup")
+    setMessage("") // Clear any previous messages
+    setShowPrivacyPopup(true)
+  }
+
+  const handlePrivacyAgree = async () => {
+    console.log("✅ PRIVACY: User agreed to privacy policy")
+    setShowPrivacyPopup(false)
+    
     console.log("📱 STEP 3: Setting loading state to true")
     setIsLoading(true)
-    setMessage("")
 
     try {
       console.log("📡 STEP 4: Making API call to /api/send-sms")
@@ -146,6 +156,12 @@ export function CarouselSection() {
       console.log("🔄 STEP 8: Setting loading state to false")
       setIsLoading(false)
     }
+  }
+
+  const handlePrivacyCancel = () => {
+    console.log("❌ PRIVACY: User cancelled privacy policy")
+    setShowPrivacyPopup(false)
+    setMessage("Demo request cancelled")
   }
 
   return (
@@ -261,6 +277,12 @@ export function CarouselSection() {
           </div>
         </div>
       </div>
+      
+      <PrivacyPolicyPopup
+        isOpen={showPrivacyPopup}
+        onAgree={handlePrivacyAgree}
+        onCancel={handlePrivacyCancel}
+      />
     </section>
   )
 }
