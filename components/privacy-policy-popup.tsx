@@ -2,7 +2,6 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface PrivacyPolicyPopupProps {
   isOpen: boolean
@@ -26,7 +25,7 @@ export function PrivacyPolicyPopup({ isOpen, onAgree, onCancel }: PrivacyPolicyP
           <DialogTitle className="text-xl font-semibold">Privacy Policy Agreement</DialogTitle>
         </DialogHeader>
         
-        <ScrollArea className="flex-1 pr-6">
+        <div className="flex-1 overflow-y-auto max-h-[60vh] pr-4">
           <div className="space-y-4 text-sm">
             <div>
               <h3 className="font-semibold text-base mb-2">Privacy Policy</h3>
@@ -83,7 +82,7 @@ export function PrivacyPolicyPopup({ isOpen, onAgree, onCancel }: PrivacyPolicyP
               </p>
             </div>
           </div>
-        </ScrollArea>
+        </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-2 pt-4">
           <Button 
